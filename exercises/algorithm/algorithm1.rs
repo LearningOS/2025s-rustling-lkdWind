@@ -7,6 +7,7 @@
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
 use std::vec::*;
+use std::cmp::PartialOrd;
 
 #[derive(Debug)]
 struct Node<T> {
@@ -29,13 +30,13 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T:PartialOrd+Clone> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+impl<T:PartialOrd+Clone> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -69,14 +70,44 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+	pub fn merge(mut list_a:LinkedList<T>, mut list_b:LinkedList<T>) -> Self
 	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+        let mut i: i32 = 0;
+        let mut j: i32 = 0; 
+		let mut result = LinkedList::<T>::new();
+        while i < list_a.length as i32 && j < list_b.length as i32 {
+            if let a = list_a.get(i).unwrap(){
+                if let b = list_b.get(j).unwrap(){
+                    if a < b {
+                        result.add((*a).clone());
+                        i += 1;
+                    } else {
+                        result.add((*b).clone());
+                        j += 1;
+                    }
+                } 
+            }           
+            
         }
+
+        while i < list_a.length as i32{
+            if let a = list_a.get(i).unwrap(){
+                result.add((*a).clone());
+                i += 1;
+            }
+        }
+        while j < list_b.length as i32{
+            if let b = list_b.get(j).unwrap(){
+                result.add((*b).clone());
+                j += 1;
+            }
+        }
+        result
+        // Self {
+        //     length:0,
+        //     start:None,
+        //     end:None,
+        // }
 	}
 }
 

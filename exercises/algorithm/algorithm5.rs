@@ -27,11 +27,21 @@ impl Graph {
 
     // Perform a breadth-first search on the graph, return the order of visited nodes
     fn bfs_with_return(&self, start: usize) -> Vec<usize> {
-        
-		//TODO
-
-        let mut visit_order = vec![];
-        visit_order
+        let mut label = vec![0; self.adj.len()];
+        let mut queue = std::collections::VecDeque::new();
+        let mut result = Vec::new();
+        queue.push_back(start);
+        while let Some(i) = queue.pop_front() {
+            if label[i] == 1 {
+                continue;
+            }
+            for &j in self.adj[i].iter() {
+                queue.push_back(j);
+            }
+            result.push(i);
+            label[i] = 1;
+        }
+        result
     }
 }
 

@@ -23,21 +23,60 @@ where
     pub fn new(comparator: fn(&T, &T) -> bool) -> Self {
         Self {
             count: 0,
-            items: vec![T::default()],
+            items: Vec::new(),
             comparator,
         }
     }
 
     pub fn len(&self) -> usize {
-        self.count
+        self.items.len()
     }
 
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
+    fn bubble_down(&mut self, index: usize) {
+        let mut current = index;
+        let len = self.items.len();
+
+        loop {
+            let left_child = self.left_child_idx(current);
+            let right_child = self.right_child_idx(current);
+            let mut smallest = current;
+
+            if left_child < len && (self.comparator)(&self.items[left_child], &self.items[smallest]) {
+                smallest = left_child;
+            }
+            if right_child < len && (self.comparator)(&self.items[right_child], &self.items[smallest]) {
+                smallest = right_child;
+            }
+
+            if smallest == current {
+                break;
+            }
+
+            self.items.swap(current, smallest);
+            current = smallest;
+        }
+    }
+
+    fn bubble_up(&mut self, index: usize) {
+        let mut current = index;
+        while current > 0 {
+            let parent = (current - 1) / 2;
+            if !(self.comparator)(&self.items[current], &self.items[parent]) {
+                break;
+            }
+            self.items.swap(current, parent);
+            current = parent;
+        }
+    }
+
     pub fn add(&mut self, value: T) {
-        //TODO
+        self.items.push(value);
+        self.bubble_up(self.items.len() - 1);
+        self.count += 1;
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -45,7 +84,7 @@ where
     }
 
     fn children_present(&self, idx: usize) -> bool {
-        self.left_child_idx(idx) <= self.count
+        self.left_child_idx(idx) <= self.count as usize
     }
 
     fn left_child_idx(&self, idx: usize) -> usize {
@@ -57,8 +96,18 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+        let left_child = self.left_child_idx(idx);
+        let right_child = self.right_child_idx(idx);
+
+        if right_child < self.items.len() {
+            if (self.comparator)(&self.items[left_child], &self.items[right_child]) {
+                left_child
+            } else {
+                right_child
+            }
+        } else {
+            left_child
+        }
     }
 }
 
@@ -84,8 +133,15 @@ where
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        if self.is_empty() {
+            return None;
+        }
+        let last_index = self.items.len() - 1;
+        self.items.swap(0, last_index);
+        let item = self.items.pop();
+        self.bubble_down(0);
+        self.count -= 1;
+        item
     }
 }
 
@@ -112,6 +168,7 @@ impl MaxHeap {
         Heap::new(|a, b| a > b)
     }
 }
+
 
 #[cfg(test)]
 mod tests {

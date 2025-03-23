@@ -30,6 +30,16 @@ impl Graph for UndirectedGraph {
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
         //TODO
+        if self.adjacency_table.contains_key(edge.0) {
+            self.adjacency_table.get_mut(edge.0).expect("REASON").push(((*edge.1).to_string(), edge.2));
+        } else {
+            self.adjacency_table.insert((*edge.0).to_string(), vec![((*edge.1).to_string(), edge.2)]);
+        }
+        if self.adjacency_table.contains_key(edge.1) {
+            self.adjacency_table.get_mut(edge.1).expect("REASON").push(((*edge.0).to_string(), edge.2));
+        } else {
+            self.adjacency_table.insert((*edge.1).to_string(), vec![((*edge.0).to_string(), edge.2)]);
+        }
     }
 }
 pub trait Graph {
@@ -44,7 +54,9 @@ pub trait Graph {
         //TODO
     }
     fn contains(&self, node: &str) -> bool {
+
         self.adjacency_table().get(node).is_some()
+
     }
     fn nodes(&self) -> HashSet<&String> {
         self.adjacency_table().keys().collect()
@@ -69,6 +81,7 @@ mod test_undirected_graph {
         graph.add_edge(("a", "b", 5));
         graph.add_edge(("b", "c", 10));
         graph.add_edge(("c", "a", 7));
+     
         let expected_edges = [
             (&String::from("a"), &String::from("b"), 5),
             (&String::from("b"), &String::from("a"), 5),

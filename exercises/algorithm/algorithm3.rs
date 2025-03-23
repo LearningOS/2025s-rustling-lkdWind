@@ -5,8 +5,26 @@
 */
 // I AM NOT DONE
 
-fn sort<T>(array: &mut [T]){
-	//TODO
+fn sort<T: std::cmp::PartialOrd>(array: &mut [T]){
+	// for i in 0..array.len() {
+    //     for j in i..array.len() {
+    //         if array[i] > array[j] {
+    //             array.swap(i, j);
+    //         }
+    //     }
+    // }
+    for i in 0..array.len() {
+        let min_index = array[i..]
+            .iter()
+            .enumerate()
+            .min_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
+            .map(|(index, _)| i+index)
+            .unwrap();
+        if i != min_index {
+            array.swap(i, min_index);
+        }
+    }
+    
 }
 #[cfg(test)]
 mod tests {
