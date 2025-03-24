@@ -10,25 +10,23 @@
 fn main() {
     let my_option: Option<()> = None;
     if my_option.is_none() {
-        // 避免 unwrap None
-        println!("my_option is None!");
+        println!("my_option is None");
     }
 
-    // 修复数组语法
     let my_arr = &[
         -1, -2, -3,
-        -4, -5, -6,
+        -4, -5, -6
     ];
     println!("My array! Here it is: {:?}", my_arr);
 
-    // 使用 clear 清空向量
-    let mut my_empty_vec = vec![1, 2, 3, 4, 5];
-    my_empty_vec.clear();
-    println!("This Vec is empty, see? {:?}", my_empty_vec);
+    let mut my_vec = vec![1, 2, 3, 4, 5];
+    my_vec.clear();
+    println!("This Vec is empty, see? {:?}", my_vec);
 
-    // 正确交换变量值
     let mut value_a = 45;
     let mut value_b = 66;
-    std::mem::swap(&mut value_a, &mut value_b);
+    // Swap these two efficiently
+    (value_a, value_b) = (value_b, value_a);
+    
     println!("value a: {}; value b: {}", value_a, value_b);
 }
